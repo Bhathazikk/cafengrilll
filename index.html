@@ -112,7 +112,7 @@ main {
 .hero .code-badge {
   color: #f6d69b;
   font-size: 11px;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   font-weight: 800;
   text-transform: uppercase;
 }
@@ -131,34 +131,38 @@ main {
 /* LIVE ORDER TRACKER CARD (CUSTOMER) */
 .order-tracker-card {
   background: #fff;
-  border: 2px solid var(--primary-red);
+  border: 1.5px solid #ebd09c;
   border-radius: 16px;
   padding: 20px;
   margin-bottom: 24px;
-  box-shadow: 0 4px 14px rgba(139, 35, 29, 0.08);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
 }
 
 .tracker-head {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-line);
+  margin-bottom: 14px;
 }
 
 .tracker-timer {
-  background: #fdf5e8;
-  border: 1px solid #ebd09c;
-  color: #925c08;
-  padding: 12px;
-  border-radius: 12px;
+  background: #fcf9f2;
+  border: 1px solid #eee2cb;
+  color: #694506;
+  padding: 16px;
+  border-radius: 14px;
   text-align: center;
-  margin: 14px 0;
+  margin-bottom: 14px;
 }
 
 .timer-number {
-  font-size: 34px;
+  font-size: 38px;
   font-weight: 900;
-  letter-spacing: 1px;
+  letter-spacing: 1.5px;
+  color: var(--primary-red);
+  margin: 4px 0;
 }
 
 .progress-bar-wrap {
@@ -167,7 +171,7 @@ main {
   background: #ece7dc;
   border-radius: 8px;
   overflow: hidden;
-  margin: 12px 0 6px;
+  margin: 10px 0 6px;
 }
 
 .progress-fill {
@@ -175,6 +179,30 @@ main {
   width: 0%;
   background: var(--status-green);
   transition: width 1s linear;
+}
+
+/* TRACKER DISHES SUMMARY LIST */
+.tracker-items-box {
+  background: #faf8f5;
+  border: 1px solid var(--border-line);
+  border-radius: 12px;
+  padding: 12px 16px;
+  margin-top: 12px;
+}
+
+.tracker-items-box h5 {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+}
+
+.tracker-item-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  padding: 3px 0;
 }
 
 /* CATEGORIES */
@@ -340,8 +368,9 @@ main {
 }
 
 select:disabled {
-  background: #f0ece1;
-  color: #494843;
+  background: #f1ede5;
+  color: #3b3935;
+  font-weight: 700;
   cursor: not-allowed;
 }
 
@@ -354,7 +383,7 @@ select:disabled {
   font-weight: 800;
 }
 
-/* TABLE PIN CONTROL PANEL (STAFF) */
+/* STAFF TABLE PIN PANEL */
 .pin-panel {
   background: #fff;
   border: 1px solid var(--border-line);
@@ -575,28 +604,34 @@ select:disabled {
   <!-- ======================== 1. CUSTOMER VIEW ======================== -->
   <section id="viewCustomer">
     <div class="hero">
-      <div class="code-badge" id="restoLicenseBadge">PORTAL READY</div>
+      <div class="code-badge">✦ Dine-in Experience</div>
       <h1 id="restoNameHeader">Authentic Dining</h1>
-      <p id="restoDescHeader">Place your order directly using the 3-digit PIN displayed at your table. No waiting for staff.</p>
+      <p id="restoDescHeader">Place your order directly using the 3-digit PIN displayed on your table. Prepared fresh for you.</p>
     </div>
 
     <!-- LIVE ORDER STATUS & TIMER -->
     <div id="customerLiveTracker" class="order-tracker-card hidden">
       <div class="tracker-head">
         <div>
-          <span style="font-size:11px;font-weight:800;color:var(--text-muted);">LIVE ORDER STATUS</span>
-          <h3 id="trackerOrderId">Order #DF-000000</h3>
+          <div style="font-size:12px; font-weight:800; color:var(--primary-red); letter-spacing:0.5px;" id="trackerTableBadge">TABLE 1</div>
+          <h3 style="font-size:17px; margin-top:2px;" id="trackerOrderId">Order in Kitchen</h3>
         </div>
         <span id="trackerStatusBadge" class="order-pill New">New</span>
       </div>
 
       <div class="tracker-timer" id="trackerTimerBox">
-        <div style="font-size:12px;font-weight:700;" id="trackerTimerHeading">Waiting for kitchen acceptance...</div>
+        <div style="font-size:13px; font-weight:700;" id="trackerTimerHeading">Your order will be delivered within:</div>
         <div class="timer-number" id="trackerCountdown">--:--</div>
         <div class="progress-bar-wrap">
           <div class="progress-fill" id="trackerProgressBar"></div>
         </div>
-        <div style="font-size:11px;color:var(--text-muted);" id="trackerSubText">Staff will accept your order and set an estimated delivery timer.</div>
+        <div style="font-size:12px; color:var(--text-muted); margin-top:6px;" id="trackerSubText">Connecting with the kitchen staff...</div>
+      </div>
+
+      <!-- ACTIVE DISHES ORDERED LIST -->
+      <div class="tracker-items-box">
+        <h5>Ordered Items</h5>
+        <div id="trackerOrderItems"></div>
       </div>
     </div>
 
@@ -639,7 +674,7 @@ select:disabled {
           </div>
 
           <div class="field">
-            <label for="inputTablePin">3-DIGIT TABLE CODE (ON YOUR TABLE)</label>
+            <label for="inputTablePin">3-DIGIT SECURITY PIN (ON YOUR TABLE)</label>
             <input type="text" id="inputTablePin" maxlength="3" placeholder="e.g. 482" style="font-size:18px;font-weight:bold;letter-spacing:3px;text-align:center;" />
           </div>
 
@@ -669,13 +704,10 @@ select:disabled {
     <div id="staffAuthCard" class="auth-panel">
       <div style="font-size:38px;margin-bottom:8px;">🔒</div>
       <h2>Staff Authentication</h2>
-      <p>Enter the paid restaurant license code issued by the Platform Administrator.</p>
+      <p>Enter the restaurant license code to access your kitchen dashboard.</p>
       
       <input type="text" id="passcodeField" placeholder="BOSS-101" />
       <button class="primary-btn" onclick="loginStaff()">Open Dashboard</button>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:14px;">
-        For new licenses or updates, contact Platform Admin.
-      </div>
     </div>
 
     <!-- PROTECTED DASHBOARD -->
@@ -684,7 +716,7 @@ select:disabled {
       <div class="staff-header">
         <div>
           <h2 id="staffRestoTitle">Restaurant Dashboard</h2>
-          <div style="font-size:12px;color:var(--text-muted);" id="staffLicenseCodeText">License: BOSS-101</div>
+          <div style="font-size:12px;color:var(--text-muted);" id="staffLicenseCodeText">License: Active</div>
         </div>
         <div>
           <button class="secondary-btn" onclick="logoutStaff()">Log Out</button>
@@ -692,7 +724,7 @@ select:disabled {
       </div>
 
       <div class="boss-admin-banner">
-        <strong>Administrator Control Active:</strong> Menu items and pricing are protected and controlled by the Platform Owner. Restaurant staff manages orders, delivery timers, and active table security PINs.
+        <strong>Administrator Control Active:</strong> Menu items and pricing are protected. Staff manages orders, preparation timers, and active table PINs.
       </div>
 
       <!-- TABLE PIN MANAGEMENT PANEL -->
@@ -700,7 +732,7 @@ select:disabled {
         <div class="pin-panel-head">
           <div>
             <h3 style="font-size:16px;">Active Table Security PINs</h3>
-            <span style="font-size:12px;color:var(--text-muted);">These PINs are displayed on the physical tables. They rotate automatically once an order is served.</span>
+            <span style="font-size:12px;color:var(--text-muted);">These 3-digit PINs are shown on the physical tables. They rotate automatically once an order is served.</span>
           </div>
           <button class="secondary-btn" onclick="rotateAllTablePins()">Rotate All PINs</button>
         </div>
@@ -738,13 +770,12 @@ select:disabled {
 
 <script>
 // =========================================================================
-// MASTER CONFIG: PLATFORM OWNER CONTROLLED (YOU)
-// Staff has no permission to edit dishes, prices, or license codes.
+// MASTER CONFIG: PLATFORM OWNER CONTROLLED
 // =========================================================================
 const MASTER_CONFIG = {
   "BOSS-101": {
     name: "Valley Wazwan & Grill",
-    phone: "919999999999", // Owner's WhatsApp number
+    phone: "919999999999",
     callMeBotKey: "DEMO_KEY",
     menu: [
       { id: 101, name: "Mutton Rogan Josh", category: "Mains", price: 380, veg: false, emoji: "🥘", desc: "Tender mutton slow-cooked in aromatic Kashmiri gravy." },
@@ -774,14 +805,7 @@ const MASTER_CONFIG = {
       { id: 302, name: "Veg Biryani", category: "Biryani", price: 190, veg: true, emoji: "🍚", desc: "Spiced basmati rice with mixed seasonal vegetables." },
       { id: 303, name: "Butter Naan", category: "Breads", price: 35, veg: true, emoji: "🫓", desc: "Soft clay-oven baked bread with melted butter." }
     ]
-  },
-  "BOSS-104": { name: "The Urban Cafe", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-105": { name: "Chili Pepper Kitchen", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-106": { name: "Al-Bake Express", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-107": { name: "Highland Shawarma", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-108": { name: "Pine Wood Treat", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-109": { name: "Green Valley Pure Veg", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
-  "BOSS-110": { name: "Saffron Street Lounge", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] }
+  }
 };
 
 // =========================================================================
@@ -798,7 +822,6 @@ let activeCustomerOrderId = localStorage.getItem("active_customer_order_id") || 
 
 let systemOrders = JSON.parse(localStorage.getItem("dineflow_sys_orders") || "[]");
 
-// Initialize or load Table PINs per restaurant
 function getTablePins(restoCode) {
   const allPins = JSON.parse(localStorage.getItem("dineflow_table_pins") || "{}");
   if (!allPins[restoCode]) {
@@ -820,13 +843,12 @@ function updateSingleTablePin(restoCode, tableNum) {
 }
 
 // =========================================================================
-// AUDIO ALERTS & SCREEN WAKE LOCK
+// AUDIO ALERTS
 // =========================================================================
 function playKitchenChime() {
   try {
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     const ctx = new AudioCtx();
-
     const osc1 = ctx.createOscillator();
     const g1 = ctx.createGain();
     osc1.frequency.setValueAtTime(880, ctx.currentTime);
@@ -836,53 +858,7 @@ function playKitchenChime() {
     g1.connect(ctx.destination);
     osc1.start(ctx.currentTime);
     osc1.stop(ctx.currentTime + 0.35);
-
-    const osc2 = ctx.createOscillator();
-    const g2 = ctx.createGain();
-    osc2.frequency.setValueAtTime(1174.66, ctx.currentTime + 0.15);
-    g2.gain.setValueAtTime(0.3, ctx.currentTime + 0.15);
-    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
-    osc2.connect(g2);
-    g2.connect(ctx.destination);
-    osc2.start(ctx.currentTime + 0.15);
-    osc2.stop(ctx.currentTime + 0.65);
-  } catch (err) {
-    console.warn("Audio needs interaction:", err);
-  }
-}
-
-async function keepScreenAwake() {
-  try {
-    if ('wakeLock' in navigator) {
-      await navigator.wakeLock.request('screen');
-    }
-  } catch (err) {
-    console.warn("WakeLock error:", err);
-  }
-}
-
-// =========================================================================
-// WHATSAPP DISPATCH
-// =========================================================================
-function sendWhatsAppNotification(order, resto) {
-  if (!resto.phone || resto.phone.includes("9999999999")) return;
-
-  const itemsText = order.items.map(i => `${i.qty}x ${i.name}`).join(", ");
-  const msg = 
-    `🔔 *NEW TABLE ORDER!*\n` +
-    `---------------------------\n` +
-    `🏢 *Restaurant:* ${resto.name}\n` +
-    `📍 *Table:* Table ${order.table} (PIN: Verified)\n` +
-    `💳 *Payment:* ${order.paymentMethod}\n` +
-    `🆔 *Order:* ${order.id}\n` +
-    `🍽 *Items:* ${itemsText}\n` +
-    (order.note ? `📝 *Note:* ${order.note}\n` : "") +
-    `💰 *Total:* ₹${order.total}\n` +
-    `---------------------------\n` +
-    `👉 Action: Set prep timer for Table ${order.table}.`;
-
-  const url = `https://api.callmebot.com/whatsapp.php?phone=${resto.phone}&text=${encodeURIComponent(msg)}&apikey=${resto.callMeBotKey}`;
-  fetch(url, { mode: 'no-cors' }).catch(e => console.error("WhatsApp error:", e));
+  } catch (err) {}
 }
 
 // =========================================================================
@@ -920,11 +896,8 @@ function navigate(view) {
 // =========================================================================
 function loadCustomerView() {
   const resto = MASTER_CONFIG[selectedResto] || MASTER_CONFIG["BOSS-101"];
-  
-  document.getElementById("restoLicenseBadge").textContent = "REST-ID: " + selectedResto;
   document.getElementById("restoNameHeader").textContent = resto.name;
 
-  // Auto-fill and lock Table selection if passed via QR code parameter (?table=X)
   const tableSelect = document.getElementById("inputTable");
   if (urlTable) {
     tableSelect.value = urlTable;
@@ -941,11 +914,6 @@ function loadCustomerView() {
 
   const list = resto.menu.filter(m => currentCategory === "All" || m.category === currentCategory);
   const grid = document.getElementById("menuGrid");
-
-  if (list.length === 0) {
-    grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted)">Menu items for this establishment are being updated by Platform Admin.</div>`;
-    return;
-  }
 
   grid.innerHTML = list.map(item => `
     <div class="food-card">
@@ -1023,9 +991,8 @@ function refreshCart() {
   document.getElementById("labelTotal").textContent = `₹${total}`;
 }
 
-// PLACE ORDER WITH TABLE PIN VERIFICATION
+// PLACE ORDER
 function placeOrder() {
-  // Support value retrieval even if dropdown is locked/disabled
   const table = document.getElementById("inputTable").value || urlTable || sessionStorage.getItem("dineflow_active_table");
   if (!table) {
     popToast("Please select your table number");
@@ -1035,17 +1002,16 @@ function placeOrder() {
 
   const enteredPin = document.getElementById("inputTablePin").value.trim();
   if (!enteredPin) {
-    popToast("Please enter the 3-digit Table Code from your table stand");
+    popToast("Please enter the 3-digit PIN shown on your table stand");
     document.getElementById("inputTablePin").focus();
     return;
   }
 
-  // Anti-Scam Check: Verify against active Table PIN
   const currentTablePins = getTablePins(selectedResto);
   const correctPin = currentTablePins[table];
 
   if (enteredPin !== correctPin) {
-    alert("⛔ Invalid Table PIN! Please enter the exact 3-digit PIN shown on Table " + table + " right now. Prank or expired orders are blocked.");
+    alert("⛔ Invalid Table PIN! Please enter the exact 3-digit PIN currently shown on Table " + table + ".");
     return;
   }
 
@@ -1085,14 +1051,13 @@ function placeOrder() {
   localStorage.setItem("active_customer_order_id", orderObj.id);
 
   playKitchenChime();
-  sendWhatsAppNotification(orderObj, resto);
 
   cart = {};
   refreshCart();
   document.getElementById("inputCookingNote").value = "";
   document.getElementById("inputTablePin").value = "";
 
-  popToast(`Order #${orderObj.id} verified & sent!`);
+  popToast("Order sent to kitchen!");
   checkCustomerOrderStatus();
   
   if (currentStaffLicense === selectedResto) {
@@ -1101,7 +1066,7 @@ function placeOrder() {
 }
 
 // -------------------------------------------------------------------------
-// CUSTOMER TIMER ENGINE
+// CUSTOMER TRACKER & AUTO RESET LOGIC
 // -------------------------------------------------------------------------
 let countdownInterval = null;
 
@@ -1119,30 +1084,63 @@ function checkCustomerOrderStatus() {
   }
 
   tracker.classList.remove("hidden");
-  document.getElementById("trackerOrderId").textContent = `Order #${order.id} (Table ${order.table} · ${order.paymentMethod})`;
+  
+  // Clean Professional Headers
+  document.getElementById("trackerTableBadge").textContent = `TABLE ${order.table} • ${order.paymentMethod.toUpperCase()}`;
+  document.getElementById("trackerOrderId").textContent = `Order #${order.id}`;
   
   const badge = document.getElementById("trackerStatusBadge");
   badge.textContent = order.status;
   badge.className = `order-pill ${order.status}`;
 
+  // Render items summary
+  const itemsBox = document.getElementById("trackerOrderItems");
+  itemsBox.innerHTML = order.items.map(i => `
+    <div class="tracker-item-row">
+      <span>${i.qty}× ${i.name}</span>
+      <span style="font-weight:700;">₹${i.qty * i.price}</span>
+    </div>
+  `).join("") + `
+    <div class="tracker-item-row" style="border-top:1px dashed var(--border-line); margin-top:6px; padding-top:6px; font-weight:800; color:var(--primary-red);">
+      <span>Payable Total</span>
+      <span>₹${order.total}</span>
+    </div>
+  `;
+
   if (countdownInterval) clearInterval(countdownInterval);
 
   if (order.status === "New") {
-    document.getElementById("trackerTimerHeading").textContent = "Waiting for kitchen acceptance...";
-    document.getElementById("trackerCountdown").textContent = "--:--";
+    document.getElementById("trackerTimerHeading").textContent = "Order Placed Successfully";
+    document.getElementById("trackerCountdown").textContent = "Pending";
+    document.getElementById("trackerCountdown").style.fontSize = "26px";
     document.getElementById("trackerProgressBar").style.width = "5%";
-    document.getElementById("trackerSubText").textContent = "Your Table PIN was verified. The kitchen will set your delivery timer shortly.";
+    document.getElementById("trackerSubText").textContent = "The kitchen is reviewing your order and will assign an exact delivery time.";
   } else if (order.status === "Served") {
-    document.getElementById("trackerTimerHeading").textContent = "Delivered to Table!";
-    document.getElementById("trackerCountdown").textContent = "✓ ENJOY";
+    document.getElementById("trackerTimerHeading").textContent = "Meal Delivered! Enjoy your food 🎉";
+    document.getElementById("trackerCountdown").textContent = "✓ SERVED";
+    document.getElementById("trackerCountdown").style.fontSize = "28px";
     document.getElementById("trackerProgressBar").style.width = "100%";
-    document.getElementById("trackerSubText").textContent = "Your meal has been served. Thank you for dining with us!";
+    document.getElementById("trackerSubText").innerHTML = `
+      <div style="margin-top:10px;">
+        <button class="primary-btn" style="padding:10px 18px; width:auto;" onclick="resetCustomerSession()">
+          + Order More Items / New Order
+        </button>
+      </div>
+    `;
+
+    // Reset view automatically after 8 seconds so the next order can start smoothly
+    setTimeout(() => {
+      resetCustomerSession();
+    }, 8000);
+
   } else if (order.status === "Ready") {
-    document.getElementById("trackerTimerHeading").textContent = "Food is Ready!";
-    document.getElementById("trackerCountdown").textContent = "00:00";
+    document.getElementById("trackerTimerHeading").textContent = "Order Plated & Ready";
+    document.getElementById("trackerCountdown").textContent = "Delivering";
+    document.getElementById("trackerCountdown").style.fontSize = "28px";
     document.getElementById("trackerProgressBar").style.width = "100%";
-    document.getElementById("trackerSubText").textContent = "Your meal is hot & ready and being delivered to your table right now.";
+    document.getElementById("trackerSubText").textContent = "Our staff is bringing your meal to Table " + order.table + " right now.";
   } else if (order.targetFinishTime) {
+    document.getElementById("trackerCountdown").style.fontSize = "38px";
     updateCountdownUI(order);
     countdownInterval = setInterval(() => {
       updateCountdownUI(order);
@@ -1169,29 +1167,35 @@ function updateCountdownUI(order) {
   document.getElementById("trackerCountdown").textContent = 
     `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
 
+  document.getElementById("trackerTimerHeading").textContent = "Your order will be delivered within:";
+
   if (remainingMs <= 0) {
-    document.getElementById("trackerTimerHeading").textContent = "Order Plating & Delivering!";
-    document.getElementById("trackerSubText").textContent = "Your food is being served to your table any second.";
+    document.getElementById("trackerSubText").textContent = "Final touches in progress. Food being brought to your table now.";
   } else {
-    document.getElementById("trackerTimerHeading").textContent = `Estimated Delivery Time (${order.prepMinutes} mins)`;
-    document.getElementById("trackerSubText").textContent = "Freshly cooking. Please enjoy your wait!";
+    document.getElementById("trackerSubText").textContent = `Estimated preparation time: ${order.prepMinutes} minutes.`;
   }
 }
 
+function resetCustomerSession() {
+  activeCustomerOrderId = null;
+  localStorage.removeItem("active_customer_order_id");
+  const tracker = document.getElementById("customerLiveTracker");
+  if (tracker) tracker.classList.add("hidden");
+  cart = {};
+  refreshCart();
+}
+
 // =========================================================================
-// STAFF DASHBOARD & TABLE PIN MANAGEMENT
+// STAFF DASHBOARD
 // =========================================================================
 function loginStaff() {
   const entered = document.getElementById("passcodeField").value.trim().toUpperCase();
-
   if (!entered || !MASTER_CONFIG[entered]) {
-    alert("Invalid Access Code. Enter the exact paid license key provided by Platform Admin.");
+    alert("Invalid Access Code. Please enter your valid restaurant license key.");
     return;
   }
-
   currentStaffLicense = entered;
   localStorage.setItem("active_staff_license", entered);
-  keepScreenAwake();
   openStaffDashboard(entered);
 }
 
@@ -1201,8 +1205,6 @@ function openStaffDashboard(license) {
 
   const resto = MASTER_CONFIG[license];
   document.getElementById("staffRestoTitle").textContent = resto.name;
-  document.getElementById("staffLicenseCodeText").textContent = "Active License: " + license;
-
   renderStaffTablePins();
   renderStaffDashboard();
 }
@@ -1236,7 +1238,7 @@ function rotateSinglePin(tableNum) {
 }
 
 function rotateAllTablePins() {
-  if (!confirm("Regenerate PIN codes for all tables? Old table PINs will immediately stop working.")) return;
+  if (!confirm("Regenerate PIN codes for all tables?")) return;
   const allPins = JSON.parse(localStorage.getItem("dineflow_table_pins") || "{}");
   allPins[currentStaffLicense] = {};
   for (let t = 1; t <= 10; t++) {
@@ -1281,7 +1283,7 @@ function renderStaffDashboard() {
       <div class="order-items-list">
         ${order.items.map(i => `
           <div>
-            <span>${i.qty} × ${i.name}</span>
+            <span>${i.qty} ×${i.name}</span>
             <strong>₹${i.qty * i.price}</strong>
           </div>
         `).join("")}
@@ -1346,14 +1348,12 @@ function updateOrderStatus(id, status) {
   }
 }
 
-// When served, mark order complete AND auto-rotate table PIN
 function markOrderServed(orderId, tableNum) {
   const target = systemOrders.find(o => o.id === orderId);
   if (target) {
     target.status = "Served";
     localStorage.setItem("dineflow_sys_orders", JSON.stringify(systemOrders));
     
-    // Auto-rotate the PIN for that table so old code expires
     const newPin = updateSingleTablePin(currentStaffLicense, tableNum);
     renderStaffTablePins();
     renderStaffDashboard();
@@ -1363,9 +1363,6 @@ function markOrderServed(orderId, tableNum) {
   }
 }
 
-// =========================================================================
-// HELPERS & STORAGE SYNC
-// =========================================================================
 function popToast(msg) {
   const toast = document.getElementById("toast");
   toast.textContent = msg;
@@ -1378,7 +1375,6 @@ function sanitize(str) {
   return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 }
 
-// Cross-tab auto sync
 window.addEventListener('storage', (e) => {
   if (e.key === 'dineflow_sys_orders') {
     systemOrders = JSON.parse(e.newValue || '[]');
@@ -1393,9 +1389,8 @@ window.addEventListener('storage', (e) => {
   }
 });
 
-// Initial boot
 loadCustomerView();
 refreshCart();
 </script>
 </body>
-</html>
+  </html>
