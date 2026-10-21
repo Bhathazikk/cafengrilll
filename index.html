@@ -339,6 +339,12 @@ main {
   border-radius: 8px;
 }
 
+select:disabled {
+  background: #f0ece1;
+  color: #494843;
+  cursor: not-allowed;
+}
+
 .primary-btn {
   width: 100%;
   padding: 14px;
@@ -783,7 +789,7 @@ const MASTER_CONFIG = {
 // =========================================================================
 const queryParams = new URLSearchParams(window.location.search);
 let selectedResto = queryParams.get("resto") || "BOSS-101";
-let urlTable = queryParams.get("table") || "";
+let urlTable = queryParams.get("table") || sessionStorage.getItem("dineflow_active_table") || "";
 
 let currentStaffLicense = localStorage.getItem("active_staff_license") || null;
 let currentCategory = "All";
@@ -918,8 +924,12 @@ function loadCustomerView() {
   document.getElementById("restoLicenseBadge").textContent = "REST-ID: " + selectedResto;
   document.getElementById("restoNameHeader").textContent = resto.name;
 
+  // Auto-fill and lock Table selection if passed via QR code parameter (?table=X)
+  const tableSelect = document.getElementById("inputTable");
   if (urlTable) {
-    document.getElementById("inputTable").value = urlTable;
+    tableSelect.value = urlTable;
+    tableSelect.disabled = true;
+    sessionStorage.setItem("dineflow_active_table", urlTable);
   }
 
   const categories = ["All", ...new Set(resto.menu.map(m => m.category))];
@@ -1015,7 +1025,8 @@ function refreshCart() {
 
 // PLACE ORDER WITH TABLE PIN VERIFICATION
 function placeOrder() {
-  const table = document.getElementById("inputTable").value;
+  // Support value retrieval even if dropdown is locked/disabled
+  const table = document.getElementById("inputTable").value || urlTable || sessionStorage.getItem("dineflow_active_table");
   if (!table) {
     popToast("Please select your table number");
     document.getElementById("inputTable").focus();
