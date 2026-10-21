@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DineFlow Central | Multi-Restaurant Platform</title>
+
+<style>
+:root {
+  --primary-red: #8b231d;
+  --dark-red: #581612;
+  --cream-bg: #f8f6f0;
+  --card-bg: #ffffff;
+  --text-main: #24231f;
+  --text-muted: #6e6d66;
+  --border-line: #e3ded5;
+  --status-green: #23734b;
+  --status-gold: #b3740e;
+  --status-blue: #1c5ba8;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--cream-bg);
+  color: var(--text-main);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+button, input, select, textarea { font: inherit; }
+button { cursor: pointer; border: 0; border-radius: 8px; }
+
+.hidden { display: none !important; }
+
+/* TOPBAR */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #ffffffeb;
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border-line);
+  padding: 12px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  font-size: 19px;
+  color: var(--primary-red);
+}
+
+.brand-icon {
+  background: var(--primary-red);
+  color: #fff;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  font-size: 18px;
+}
+
+.view-controls {
+  display: flex;
+  background: #ece7dc;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+}
+
+.view-btn {
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--text-muted);
+  font-weight: 700;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background: #fff;
+  color: var(--primary-red);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.06);
+}
+
+/* MAIN CONTAINERS */
+main {
+  max-width: 1100px;
+  margin: auto;
+  padding: 24px 16px 80px;
+}
+
+/* HERO */
+.hero {
+  background: linear-gradient(135deg, var(--dark-red), var(--primary-red) 70%, #aa3b33);
+  color: #fff;
+  border-radius: 18px;
+  padding: 28px 22px;
+  margin-bottom: 22px;
+}
+
+.hero .code-badge {
+  color: #f6d69b;
+  font-size: 11px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.hero h1 {
+  font-size: clamp(24px, 4vw, 36px);
+  margin: 6px 0;
+}
+
+.hero p {
+  color: #f7ebe6;
+  font-size: 14px;
+  max-width: 580px;
+}
+
+/* LIVE ORDER TRACKER CARD (CUSTOMER) */
+.order-tracker-card {
+  background: #fff;
+  border: 2px solid var(--primary-red);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 14px rgba(139, 35, 29, 0.08);
+}
+
+.tracker-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.tracker-timer {
+  background: #fdf5e8;
+  border: 1px solid #ebd09c;
+  color: #925c08;
+  padding: 12px;
+  border-radius: 12px;
+  text-align: center;
+  margin: 14px 0;
+}
+
+.timer-number {
+  font-size: 34px;
+  font-weight: 900;
+  letter-spacing: 1px;
+}
+
+.progress-bar-wrap {
+  width: 100%;
+  height: 8px;
+  background: #ece7dc;
+  border-radius: 8px;
+  overflow: hidden;
+  margin: 12px 0 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: var(--status-green);
+  transition: width 1s linear;
+}
+
+/* CATEGORIES */
+.categories {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 0 16px;
+}
+
+.cat-chip {
+  background: #fff;
+  border: 1px solid var(--border-line);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.cat-chip.active {
+  background: var(--primary-red);
+  color: #fff;
+  border-color: var(--primary-red);
+}
+
+/* MENU LAYOUT */
+.menu-layout {
+  display: grid;
+  grid-template-columns: 1fr 340px;
+  gap: 24px;
+  align-items: start;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+  gap: 16px;
+}
+
+.food-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-line);
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.food-visual {
+  height: 125px;
+  background: linear-gradient(135deg, #f3e6d8, #faebe0);
+  display: grid;
+  place-items: center;
+  font-size: 52px;
+  position: relative;
+}
+
+.veg-tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.veg-tag.veg { color: var(--status-green); border: 1px solid var(--status-green); }
+.veg-tag.non-veg { color: #a82a20; border: 1px solid #a82a20; }
+
+.food-body {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.food-body h4 { font-size: 15px; margin-bottom: 4px; }
+.food-body p { font-size: 12px; color: var(--text-muted); margin-bottom: 12px; flex-grow: 1; }
+
+.food-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.food-footer .price { font-weight: 800; font-size: 16px; }
+
+.add-btn {
+  background: #f8ebe6;
+  color: var(--primary-red);
+  padding: 8px 14px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* CART PANEL */
+.cart-panel {
+  background: var(--card-bg);
+  border: 1px solid var(--border-line);
+  border-radius: 14px;
+  padding: 20px;
+  position: sticky;
+  top: 80px;
+}
+
+.cart-panel h3 { font-size: 17px; margin-bottom: 12px; }
+
+.cart-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-line);
+  font-size: 13px;
+}
+
+.cart-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 5px;
+}
+
+.cart-controls button {
+  width: 24px;
+  height: 24px;
+  background: #fff;
+  border: 1px solid var(--border-line);
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.cart-totals {
+  margin: 16px 0;
+  font-size: 13px;
+}
+
+.row-total {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.row-total.final {
+  border-top: 1px solid var(--border-line);
+  padding-top: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  color: var(--primary-red);
+}
+
+.field { margin: 12px 0; }
+.field label { display: block; font-size: 11px; font-weight: 800; margin-bottom: 5px; }
+.field input, .field select, .field textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid var(--border-line);
+  background: #fff;
+  border-radius: 8px;
+}
+
+.primary-btn {
+  width: 100%;
+  padding: 14px;
+  background: var(--primary-red);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+/* TABLE PIN CONTROL PANEL (STAFF) */
+.pin-panel {
+  background: #fff;
+  border: 1px solid var(--border-line);
+  border-radius: 14px;
+  padding: 18px;
+  margin-bottom: 24px;
+}
+
+.pin-panel-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+}
+
+.pin-card {
+  background: #faf8f5;
+  border: 1px solid var(--border-line);
+  border-radius: 10px;
+  padding: 10px;
+  text-align: center;
+}
+
+.pin-card h5 { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; }
+.pin-card .pin-val { font-size: 20px; font-weight: 900; color: var(--primary-red); letter-spacing: 2px; }
+.pin-refresh-btn {
+  margin-top: 6px;
+  background: #ece7dc;
+  padding: 4px 8px;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* STAFF AUTH / LOGIN */
+.auth-panel {
+  background: #fff;
+  border: 1px solid var(--border-line);
+  border-radius: 16px;
+  padding: 35px 24px;
+  max-width: 440px;
+  margin: 40px auto;
+  text-align: center;
+}
+
+.auth-panel h2 { font-size: 21px; margin-bottom: 8px; }
+.auth-panel p { font-size: 13px; color: var(--text-muted); margin-bottom: 22px; }
+.auth-panel input {
+  text-align: center;
+  font-size: 18px;
+  letter-spacing: 2px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* STAFF DASHBOARD */
+.staff-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.boss-admin-banner {
+  background: #fef7ea;
+  border-left: 4px solid var(--status-gold);
+  color: #79520e;
+  padding: 12px 16px;
+  font-size: 12px;
+  line-height: 1.5;
+  border-radius: 0 8px 8px 0;
+  margin-bottom: 22px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.stat-card {
+  background: #fff;
+  border: 1px solid var(--border-line);
+  border-radius: 12px;
+  padding: 14px;
+}
+
+.stat-card span { font-size: 12px; color: var(--text-muted); }
+.stat-card strong { display: block; font-size: 24px; margin-top: 6px; }
+
+.orders-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  gap: 16px;
+}
+
+.order-box {
+  background: #fff;
+  border: 1px solid var(--border-line);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.order-box-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+
+.order-pill {
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.order-pill.New { background: #fdf2de; color: #9c6707; }
+.order-pill.Accepted { background: #e3effd; color: var(--status-blue); }
+.order-pill.Preparing { background: #fdeee0; color: #b75e14; }
+.order-pill.Ready { background: #e2f6e9; color: var(--status-green); }
+.order-pill.Served { background: #eeebe6; color: #585651; }
+
+.order-items-list {
+  padding: 10px 0;
+  border-top: 1px solid var(--border-line);
+  border-bottom: 1px solid var(--border-line);
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+
+.order-items-list div {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.time-selector-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.time-btn {
+  background: #ece8df;
+  color: var(--text-main);
+  padding: 6px 10px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.time-btn:hover { background: #ded8cb; }
+
+.order-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 10px;
+}
+
+.order-actions button {
+  padding: 8px 12px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.secondary-btn { background: #ebe6db; color: var(--text-main); padding: 8px 14px; font-weight: 700; }
+
+/* TOAST */
+.toast-msg {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #21201e;
+  color: #fff;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 13px;
+  z-index: 100;
+}
+
+@media (max-width: 768px) {
+  .menu-layout { grid-template-columns: 1fr; }
+  .cart-panel { position: static; }
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="brand-icon">✦</div>
+    <div>DineFlow Central</div>
+  </div>
+
+  <div class="view-controls">
+    <button id="btnCustomerTab" class="view-btn active" onclick="navigate('customer')">Customer View</button>
+    <button id="btnStaffTab" class="view-btn" onclick="navigate('staff')">Staff Portal</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- ======================== 1. CUSTOMER VIEW ======================== -->
+  <section id="viewCustomer">
+    <div class="hero">
+      <div class="code-badge" id="restoLicenseBadge">PORTAL READY</div>
+      <h1 id="restoNameHeader">Authentic Dining</h1>
+      <p id="restoDescHeader">Place your order directly using the 3-digit PIN displayed at your table. No waiting for staff.</p>
+    </div>
+
+    <!-- LIVE ORDER STATUS & TIMER -->
+    <div id="customerLiveTracker" class="order-tracker-card hidden">
+      <div class="tracker-head">
+        <div>
+          <span style="font-size:11px;font-weight:800;color:var(--text-muted);">LIVE ORDER STATUS</span>
+          <h3 id="trackerOrderId">Order #DF-000000</h3>
+        </div>
+        <span id="trackerStatusBadge" class="order-pill New">New</span>
+      </div>
+
+      <div class="tracker-timer" id="trackerTimerBox">
+        <div style="font-size:12px;font-weight:700;" id="trackerTimerHeading">Waiting for kitchen acceptance...</div>
+        <div class="timer-number" id="trackerCountdown">--:--</div>
+        <div class="progress-bar-wrap">
+          <div class="progress-fill" id="trackerProgressBar"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);" id="trackerSubText">Staff will accept your order and set an estimated delivery timer.</div>
+      </div>
+    </div>
+
+    <div class="categories" id="categoriesWrap"></div>
+
+    <div class="menu-layout">
+      <div class="menu-grid" id="menuGrid"></div>
+
+      <aside class="cart-panel">
+        <h3>Your Order Tray</h3>
+        <div id="cartEntries"></div>
+
+        <div id="cartActionArea">
+          <div class="cart-totals">
+            <div class="row-total">
+              <span>Subtotal</span>
+              <span id="labelSubtotal">₹0</span>
+            </div>
+            <div class="row-total final">
+              <span>Payable Total</span>
+              <span id="labelTotal">₹0</span>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="inputTable">TABLE NUMBER</label>
+            <select id="inputTable">
+              <option value="">Select Table</option>
+              <option value="1">Table 1</option>
+              <option value="2">Table 2</option>
+              <option value="3">Table 3</option>
+              <option value="4">Table 4</option>
+              <option value="5">Table 5</option>
+              <option value="6">Table 6</option>
+              <option value="7">Table 7</option>
+              <option value="8">Table 8</option>
+              <option value="9">Table 9</option>
+              <option value="10">Table 10</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="inputTablePin">3-DIGIT TABLE CODE (ON YOUR TABLE)</label>
+            <input type="text" id="inputTablePin" maxlength="3" placeholder="e.g. 482" style="font-size:18px;font-weight:bold;letter-spacing:3px;text-align:center;" />
+          </div>
+
+          <div class="field">
+            <label for="inputPaymentMode">PAYMENT METHOD</label>
+            <select id="inputPaymentMode">
+              <option value="Cash at Table">Cash at Table</option>
+              <option value="UPI at Counter">UPI at Counter</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label for="inputCookingNote">SPECIAL INSTRUCTIONS</label>
+            <textarea id="inputCookingNote" rows="2" placeholder="e.g., Less spicy, no extra butter..."></textarea>
+          </div>
+
+          <button class="primary-btn" onclick="placeOrder()">Send Order to Kitchen</button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ======================== 2. STAFF VIEW ======================== -->
+  <section id="viewStaff" class="hidden">
+
+    <!-- LOGIN LOCK -->
+    <div id="staffAuthCard" class="auth-panel">
+      <div style="font-size:38px;margin-bottom:8px;">🔒</div>
+      <h2>Staff Authentication</h2>
+      <p>Enter the paid restaurant license code issued by the Platform Administrator.</p>
+      
+      <input type="text" id="passcodeField" placeholder="BOSS-101" />
+      <button class="primary-btn" onclick="loginStaff()">Open Dashboard</button>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:14px;">
+        For new licenses or updates, contact Platform Admin.
+      </div>
+    </div>
+
+    <!-- PROTECTED DASHBOARD -->
+    <div id="staffMainDashboard" class="hidden">
+      
+      <div class="staff-header">
+        <div>
+          <h2 id="staffRestoTitle">Restaurant Dashboard</h2>
+          <div style="font-size:12px;color:var(--text-muted);" id="staffLicenseCodeText">License: BOSS-101</div>
+        </div>
+        <div>
+          <button class="secondary-btn" onclick="logoutStaff()">Log Out</button>
+        </div>
+      </div>
+
+      <div class="boss-admin-banner">
+        <strong>Administrator Control Active:</strong> Menu items and pricing are protected and controlled by the Platform Owner. Restaurant staff manages orders, delivery timers, and active table security PINs.
+      </div>
+
+      <!-- TABLE PIN MANAGEMENT PANEL -->
+      <div class="pin-panel">
+        <div class="pin-panel-head">
+          <div>
+            <h3 style="font-size:16px;">Active Table Security PINs</h3>
+            <span style="font-size:12px;color:var(--text-muted);">These PINs are displayed on the physical tables. They rotate automatically once an order is served.</span>
+          </div>
+          <button class="secondary-btn" onclick="rotateAllTablePins()">Rotate All PINs</button>
+        </div>
+        <div class="pin-grid" id="staffPinGrid"></div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <span>Active Orders</span>
+          <strong id="statActive">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Kitchen Cooking</span>
+          <strong id="statCooking">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Served Today</span>
+          <strong id="statServed">0</strong>
+        </div>
+        <div class="stat-card">
+          <span>Total Revenue</span>
+          <strong id="statRevenue">₹0</strong>
+        </div>
+      </div>
+
+      <h3 style="margin-bottom:14px;">Incoming Live Orders</h3>
+      <div class="orders-grid" id="staffOrdersContainer"></div>
+    </div>
+
+  </section>
+
+</main>
+
+<div id="toast" class="toast-msg hidden"></div>
+
+<script>
+// =========================================================================
+// MASTER CONFIG: PLATFORM OWNER CONTROLLED (YOU)
+// Staff has no permission to edit dishes, prices, or license codes.
+// =========================================================================
+const MASTER_CONFIG = {
+  "BOSS-101": {
+    name: "Valley Wazwan & Grill",
+    phone: "919999999999", // Owner's WhatsApp number
+    callMeBotKey: "DEMO_KEY",
+    menu: [
+      { id: 101, name: "Mutton Rogan Josh", category: "Mains", price: 380, veg: false, emoji: "🥘", desc: "Tender mutton slow-cooked in aromatic Kashmiri gravy." },
+      { id: 102, name: "Gushtaba (2 Pcs)", category: "Mains", price: 340, veg: false, emoji: "🍲", desc: "Velvety minced mutton meatballs in rich yogurt gravy." },
+      { id: 103, name: "Chicken Kanti", category: "Starters", price: 280, veg: false, emoji: "🍗", desc: "Pan-fried boneless chicken tossed with green chillies." },
+      { id: 104, name: "Paneer Tikka", category: "Starters", price: 210, veg: true, emoji: "🧀", desc: "Charcoal grilled paneer cubes marinated in spices." },
+      { id: 105, name: "Kashmiri Kahwa", category: "Beverages", price: 60, veg: true, emoji: "🍵", desc: "Traditional saffron green tea with crushed almonds." }
+    ]
+  },
+  "BOSS-102": {
+    name: "Crispy Crust Pizzeria",
+    phone: "919999999999",
+    callMeBotKey: "DEMO_KEY",
+    menu: [
+      { id: 201, name: "Margherita Supreme", category: "Pizza", price: 240, veg: true, emoji: "🍕", desc: "Fresh basil, marinara sauce, and melted mozzarella." },
+      { id: 202, name: "Barbecue Chicken Pizza", category: "Pizza", price: 320, veg: false, emoji: "🍕", desc: "Smoky chicken chunks, red onions, and sweet BBQ glaze." },
+      { id: 203, name: "Garlic Wings", category: "Sides", price: 190, veg: false, emoji: "🍗", desc: "Crispy wings tossed in rich garlic herb butter." },
+      { id: 204, name: "Fresh Lemon Soda", category: "Drinks", price: 70, veg: true, emoji: "🍋", desc: "Chilled sparkling lemon soda." }
+    ]
+  },
+  "BOSS-103": {
+    name: "Royal Mughal Darbar",
+    phone: "919999999999",
+    callMeBotKey: "DEMO_KEY",
+    menu: [
+      { id: 301, name: "Chicken Dum Biryani", category: "Biryani", price: 250, veg: false, emoji: "🍛", desc: "Fragrant basmati rice cooked on slow dum." },
+      { id: 302, name: "Veg Biryani", category: "Biryani", price: 190, veg: true, emoji: "🍚", desc: "Spiced basmati rice with mixed seasonal vegetables." },
+      { id: 303, name: "Butter Naan", category: "Breads", price: 35, veg: true, emoji: "🫓", desc: "Soft clay-oven baked bread with melted butter." }
+    ]
+  },
+  "BOSS-104": { name: "The Urban Cafe", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-105": { name: "Chili Pepper Kitchen", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-106": { name: "Al-Bake Express", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-107": { name: "Highland Shawarma", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-108": { name: "Pine Wood Treat", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-109": { name: "Green Valley Pure Veg", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] },
+  "BOSS-110": { name: "Saffron Street Lounge", phone: "919999999999", callMeBotKey: "DEMO_KEY", menu: [] }
+};
+
+// =========================================================================
+// APPLICATION STATE
+// =========================================================================
+const queryParams = new URLSearchParams(window.location.search);
+let selectedResto = queryParams.get("resto") || "BOSS-101";
+let urlTable = queryParams.get("table") || "";
+
+let currentStaffLicense = localStorage.getItem("active_staff_license") || null;
+let currentCategory = "All";
+let cart = {};
+let activeCustomerOrderId = localStorage.getItem("active_customer_order_id") || null;
+
+let systemOrders = JSON.parse(localStorage.getItem("dineflow_sys_orders") || "[]");
+
+// Initialize or load Table PINs per restaurant
+function getTablePins(restoCode) {
+  const allPins = JSON.parse(localStorage.getItem("dineflow_table_pins") || "{}");
+  if (!allPins[restoCode]) {
+    allPins[restoCode] = {};
+    for (let t = 1; t <= 10; t++) {
+      allPins[restoCode][t] = String(Math.floor(100 + Math.random() * 900));
+    }
+    localStorage.setItem("dineflow_table_pins", JSON.stringify(allPins));
+  }
+  return allPins[restoCode];
+}
+
+function updateSingleTablePin(restoCode, tableNum) {
+  const allPins = JSON.parse(localStorage.getItem("dineflow_table_pins") || "{}");
+  if (!allPins[restoCode]) allPins[restoCode] = {};
+  allPins[restoCode][tableNum] = String(Math.floor(100 + Math.random() * 900));
+  localStorage.setItem("dineflow_table_pins", JSON.stringify(allPins));
+  return allPins[restoCode][tableNum];
+}
+
+// =========================================================================
+// AUDIO ALERTS & SCREEN WAKE LOCK
+// =========================================================================
+function playKitchenChime() {
+  try {
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    const ctx = new AudioCtx();
+
+    const osc1 = ctx.createOscillator();
+    const g1 = ctx.createGain();
+    osc1.frequency.setValueAtTime(880, ctx.currentTime);
+    g1.gain.setValueAtTime(0.3, ctx.currentTime);
+    g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    osc1.connect(g1);
+    g1.connect(ctx.destination);
+    osc1.start(ctx.currentTime);
+    osc1.stop(ctx.currentTime + 0.35);
+
+    const osc2 = ctx.createOscillator();
+    const g2 = ctx.createGain();
+    osc2.frequency.setValueAtTime(1174.66, ctx.currentTime + 0.15);
+    g2.gain.setValueAtTime(0.3, ctx.currentTime + 0.15);
+    g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.65);
+    osc2.connect(g2);
+    g2.connect(ctx.destination);
+    osc2.start(ctx.currentTime + 0.15);
+    osc2.stop(ctx.currentTime + 0.65);
+  } catch (err) {
+    console.warn("Audio needs interaction:", err);
+  }
+}
+
+async function keepScreenAwake() {
+  try {
+    if ('wakeLock' in navigator) {
+      await navigator.wakeLock.request('screen');
+    }
+  } catch (err) {
+    console.warn("WakeLock error:", err);
+  }
+}
+
+// =========================================================================
+// WHATSAPP DISPATCH
+// =========================================================================
+function sendWhatsAppNotification(order, resto) {
+  if (!resto.phone || resto.phone.includes("9999999999")) return;
+
+  const itemsText = order.items.map(i => `${i.qty}x ${i.name}`).join(", ");
+  const msg = 
+    `🔔 *NEW TABLE ORDER!*\n` +
+    `---------------------------\n` +
+    `🏢 *Restaurant:* ${resto.name}\n` +
+    `📍 *Table:* Table ${order.table} (PIN: Verified)\n` +
+    `💳 *Payment:* ${order.paymentMethod}\n` +
+    `🆔 *Order:* ${order.id}\n` +
+    `🍽 *Items:* ${itemsText}\n` +
+    (order.note ? `📝 *Note:* ${order.note}\n` : "") +
+    `💰 *Total:* ₹${order.total}\n` +
+    `---------------------------\n` +
+    `👉 Action: Set prep timer for Table ${order.table}.`;
+
+  const url = `https://api.callmebot.com/whatsapp.php?phone=${resto.phone}&text=${encodeURIComponent(msg)}&apikey=${resto.callMeBotKey}`;
+  fetch(url, { mode: 'no-cors' }).catch(e => console.error("WhatsApp error:", e));
+}
+
+// =========================================================================
+// NAVIGATION
+// =========================================================================
+function navigate(view) {
+  const cView = document.getElementById("viewCustomer");
+  const sView = document.getElementById("viewStaff");
+  const cBtn = document.getElementById("btnCustomerTab");
+  const sBtn = document.getElementById("btnStaffTab");
+
+  if (view === "customer") {
+    cView.classList.remove("hidden");
+    sView.classList.add("hidden");
+    cBtn.classList.add("active");
+    sBtn.classList.remove("active");
+    checkCustomerOrderStatus();
+  } else {
+    cView.classList.add("hidden");
+    sView.classList.remove("hidden");
+    cBtn.classList.remove("active");
+    sBtn.classList.add("active");
+
+    if (currentStaffLicense && MASTER_CONFIG[currentStaffLicense]) {
+      openStaffDashboard(currentStaffLicense);
+    } else {
+      document.getElementById("staffAuthCard").classList.remove("hidden");
+      document.getElementById("staffMainDashboard").classList.add("hidden");
+    }
+  }
+}
+
+// =========================================================================
+// CUSTOMER VIEW
+// =========================================================================
+function loadCustomerView() {
+  const resto = MASTER_CONFIG[selectedResto] || MASTER_CONFIG["BOSS-101"];
+  
+  document.getElementById("restoLicenseBadge").textContent = "REST-ID: " + selectedResto;
+  document.getElementById("restoNameHeader").textContent = resto.name;
+
+  if (urlTable) {
+    document.getElementById("inputTable").value = urlTable;
+  }
+
+  const categories = ["All", ...new Set(resto.menu.map(m => m.category))];
+  document.getElementById("categoriesWrap").innerHTML = categories.map(cat => `
+    <button class="cat-chip ${currentCategory === cat ? 'active' : ''}" onclick="pickCategory('${cat}')">
+      ${cat}
+    </button>
+  `).join("");
+
+  const list = resto.menu.filter(m => currentCategory === "All" || m.category === currentCategory);
+  const grid = document.getElementById("menuGrid");
+
+  if (list.length === 0) {
+    grid.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted)">Menu items for this establishment are being updated by Platform Admin.</div>`;
+    return;
+  }
+
+  grid.innerHTML = list.map(item => `
+    <div class="food-card">
+      <div class="food-visual">
+        ${item.emoji}
+        <span class="veg-tag ${item.veg ? 'veg' : 'non-veg'}">${item.veg ? 'VEG' : 'NON-VEG'}</span>
+      </div>
+      <div class="food-body">
+        <h4>${item.name}</h4>
+        <p>${item.desc}</p>
+        <div class="food-footer">
+          <span class="price">₹${item.price}</span>
+          <button class="add-btn" onclick="addToTray(${item.id})">+ Add</button>
+        </div>
+      </div>
+    </div>
+  `).join("");
+
+  checkCustomerOrderStatus();
+}
+
+function pickCategory(category) {
+  currentCategory = category;
+  loadCustomerView();
+}
+
+function addToTray(id) {
+  cart[id] = (cart[id] || 0) + 1;
+  refreshCart();
+  popToast("Added to tray");
+}
+
+function adjustQty(id, diff) {
+  cart[id] = (cart[id] || 0) + diff;
+  if (cart[id] <= 0) delete cart[id];
+  refreshCart();
+}
+
+function refreshCart() {
+  const resto = MASTER_CONFIG[selectedResto] || MASTER_CONFIG["BOSS-101"];
+  const container = document.getElementById("cartEntries");
+  const items = Object.entries(cart);
+
+  if (items.length === 0) {
+    container.innerHTML = `<div style="text-align:center;padding:25px 0;color:var(--text-muted);font-size:13px;">Your tray is empty.<br>Choose dishes to start your order.</div>`;
+    document.getElementById("labelSubtotal").textContent = "₹0";
+    document.getElementById("labelTotal").textContent = "₹0";
+    return;
+  }
+
+  let total = 0;
+  container.innerHTML = items.map(([id, qty]) => {
+    const dish = resto.menu.find(m => m.id === Number(id));
+    if (!dish) return "";
+    const lineTotal = dish.price * qty;
+    total += lineTotal;
+
+    return `
+      <div class="cart-item">
+        <div>
+          <strong>${dish.name}</strong>
+          <div style="color:var(--text-muted);font-size:11px;">₹${dish.price} each</div>
+          <div class="cart-controls">
+            <button onclick="adjustQty(${dish.id}, -1)">−</button>
+            <span>${qty}</span>
+            <button onclick="adjustQty(${dish.id}, 1)">+</button>
+          </div>
+        </div>
+        <div style="font-weight:700;">₹${lineTotal}</div>
+      </div>
+    `;
+  }).join("");
+
+  document.getElementById("labelSubtotal").textContent = `₹${total}`;
+  document.getElementById("labelTotal").textContent = `₹${total}`;
+}
+
+// PLACE ORDER WITH TABLE PIN VERIFICATION
+function placeOrder() {
+  const table = document.getElementById("inputTable").value;
+  if (!table) {
+    popToast("Please select your table number");
+    document.getElementById("inputTable").focus();
+    return;
+  }
+
+  const enteredPin = document.getElementById("inputTablePin").value.trim();
+  if (!enteredPin) {
+    popToast("Please enter the 3-digit Table Code from your table stand");
+    document.getElementById("inputTablePin").focus();
+    return;
+  }
+
+  // Anti-Scam Check: Verify against active Table PIN
+  const currentTablePins = getTablePins(selectedResto);
+  const correctPin = currentTablePins[table];
+
+  if (enteredPin !== correctPin) {
+    alert("⛔ Invalid Table PIN! Please enter the exact 3-digit PIN shown on Table " + table + " right now. Prank or expired orders are blocked.");
+    return;
+  }
+
+  const items = Object.entries(cart);
+  if (items.length === 0) {
+    popToast("Please add at least one dish first");
+    return;
+  }
+
+  const resto = MASTER_CONFIG[selectedResto];
+  let sum = 0;
+  const orderList = items.map(([id, qty]) => {
+    const item = resto.menu.find(m => m.id === Number(id));
+    sum += item.price * qty;
+    return { id: item.id, name: item.name, price: item.price, qty: qty };
+  });
+
+  const orderObj = {
+    id: "DF-" + Math.floor(100000 + Math.random() * 900000),
+    restoCode: selectedResto,
+    table: Number(table),
+    paymentMethod: document.getElementById("inputPaymentMode").value,
+    items: orderList,
+    total: sum,
+    note: document.getElementById("inputCookingNote").value.trim(),
+    status: "New",
+    prepMinutes: 0,
+    acceptedAt: null,
+    targetFinishTime: null,
+    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+  };
+
+  systemOrders.unshift(orderObj);
+  localStorage.setItem("dineflow_sys_orders", JSON.stringify(systemOrders));
+
+  activeCustomerOrderId = orderObj.id;
+  localStorage.setItem("active_customer_order_id", orderObj.id);
+
+  playKitchenChime();
+  sendWhatsAppNotification(orderObj, resto);
+
+  cart = {};
+  refreshCart();
+  document.getElementById("inputCookingNote").value = "";
+  document.getElementById("inputTablePin").value = "";
+
+  popToast(`Order #${orderObj.id} verified & sent!`);
+  checkCustomerOrderStatus();
+  
+  if (currentStaffLicense === selectedResto) {
+    renderStaffDashboard();
+  }
+}
+
+// -------------------------------------------------------------------------
+// CUSTOMER TIMER ENGINE
+// -------------------------------------------------------------------------
+let countdownInterval = null;
+
+function checkCustomerOrderStatus() {
+  const tracker = document.getElementById("customerLiveTracker");
+  if (!activeCustomerOrderId) {
+    tracker.classList.add("hidden");
+    return;
+  }
+
+  const order = systemOrders.find(o => o.id === activeCustomerOrderId);
+  if (!order) {
+    tracker.classList.add("hidden");
+    return;
+  }
+
+  tracker.classList.remove("hidden");
+  document.getElementById("trackerOrderId").textContent = `Order #${order.id} (Table ${order.table} · ${order.paymentMethod})`;
+  
+  const badge = document.getElementById("trackerStatusBadge");
+  badge.textContent = order.status;
+  badge.className = `order-pill ${order.status}`;
+
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  if (order.status === "New") {
+    document.getElementById("trackerTimerHeading").textContent = "Waiting for kitchen acceptance...";
+    document.getElementById("trackerCountdown").textContent = "--:--";
+    document.getElementById("trackerProgressBar").style.width = "5%";
+    document.getElementById("trackerSubText").textContent = "Your Table PIN was verified. The kitchen will set your delivery timer shortly.";
+  } else if (order.status === "Served") {
+    document.getElementById("trackerTimerHeading").textContent = "Delivered to Table!";
+    document.getElementById("trackerCountdown").textContent = "✓ ENJOY";
+    document.getElementById("trackerProgressBar").style.width = "100%";
+    document.getElementById("trackerSubText").textContent = "Your meal has been served. Thank you for dining with us!";
+  } else if (order.status === "Ready") {
+    document.getElementById("trackerTimerHeading").textContent = "Food is Ready!";
+    document.getElementById("trackerCountdown").textContent = "00:00";
+    document.getElementById("trackerProgressBar").style.width = "100%";
+    document.getElementById("trackerSubText").textContent = "Your meal is hot & ready and being delivered to your table right now.";
+  } else if (order.targetFinishTime) {
+    updateCountdownUI(order);
+    countdownInterval = setInterval(() => {
+      updateCountdownUI(order);
+    }, 1000);
+  }
+}
+
+function updateCountdownUI(order) {
+  const now = Date.now();
+  const finish = order.targetFinishTime;
+  const start = order.acceptedAt;
+  const remainingMs = Math.max(0, finish - now);
+
+  const totalDurationMs = finish - start;
+  const elapsedMs = now - start;
+  const progressPercent = Math.min(100, Math.max(0, (elapsedMs / totalDurationMs) * 100));
+
+  document.getElementById("trackerProgressBar").style.width = progressPercent + "%";
+
+  const totalSec = Math.floor(remainingMs / 1000);
+  const mins = Math.floor(totalSec / 60);
+  const secs = totalSec % 60;
+
+  document.getElementById("trackerCountdown").textContent = 
+    `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+
+  if (remainingMs <= 0) {
+    document.getElementById("trackerTimerHeading").textContent = "Order Plating & Delivering!";
+    document.getElementById("trackerSubText").textContent = "Your food is being served to your table any second.";
+  } else {
+    document.getElementById("trackerTimerHeading").textContent = `Estimated Delivery Time (${order.prepMinutes} mins)`;
+    document.getElementById("trackerSubText").textContent = "Freshly cooking. Please enjoy your wait!";
+  }
+}
+
+// =========================================================================
+// STAFF DASHBOARD & TABLE PIN MANAGEMENT
+// =========================================================================
+function loginStaff() {
+  const entered = document.getElementById("passcodeField").value.trim().toUpperCase();
+
+  if (!entered || !MASTER_CONFIG[entered]) {
+    alert("Invalid Access Code. Enter the exact paid license key provided by Platform Admin.");
+    return;
+  }
+
+  currentStaffLicense = entered;
+  localStorage.setItem("active_staff_license", entered);
+  keepScreenAwake();
+  openStaffDashboard(entered);
+}
+
+function openStaffDashboard(license) {
+  document.getElementById("staffAuthCard").classList.add("hidden");
+  document.getElementById("staffMainDashboard").classList.remove("hidden");
+
+  const resto = MASTER_CONFIG[license];
+  document.getElementById("staffRestoTitle").textContent = resto.name;
+  document.getElementById("staffLicenseCodeText").textContent = "Active License: " + license;
+
+  renderStaffTablePins();
+  renderStaffDashboard();
+}
+
+function logoutStaff() {
+  currentStaffLicense = null;
+  localStorage.removeItem("active_staff_license");
+  document.getElementById("passcodeField").value = "";
+  document.getElementById("staffMainDashboard").classList.add("hidden");
+  document.getElementById("staffAuthCard").classList.remove("hidden");
+}
+
+function renderStaffTablePins() {
+  if (!currentStaffLicense) return;
+  const pins = getTablePins(currentStaffLicense);
+  const grid = document.getElementById("staffPinGrid");
+
+  grid.innerHTML = Object.entries(pins).map(([tbl, code]) => `
+    <div class="pin-card">
+      <h5>Table ${tbl}</h5>
+      <div class="pin-val">${code}</div>
+      <button class="pin-refresh-btn" onclick="rotateSinglePin(${tbl})">Change</button>
+    </div>
+  `).join("");
+}
+
+function rotateSinglePin(tableNum) {
+  const newPin = updateSingleTablePin(currentStaffLicense, tableNum);
+  renderStaffTablePins();
+  popToast(`Table ${tableNum} PIN rotated to ${newPin}`);
+}
+
+function rotateAllTablePins() {
+  if (!confirm("Regenerate PIN codes for all tables? Old table PINs will immediately stop working.")) return;
+  const allPins = JSON.parse(localStorage.getItem("dineflow_table_pins") || "{}");
+  allPins[currentStaffLicense] = {};
+  for (let t = 1; t <= 10; t++) {
+    allPins[currentStaffLicense][t] = String(Math.floor(100 + Math.random() * 900));
+  }
+  localStorage.setItem("dineflow_table_pins", JSON.stringify(allPins));
+  renderStaffTablePins();
+  popToast("All table PINs rotated!");
+}
+
+function renderStaffDashboard() {
+  if (!currentStaffLicense) return;
+
+  const orders = systemOrders.filter(o => o.restoCode === currentStaffLicense);
+
+  const activeCount = orders.filter(o => ["New", "Accepted", "Preparing", "Ready"].includes(o.status)).length;
+  const cookCount = orders.filter(o => o.status === "Preparing" || o.status === "Accepted").length;
+  const servedCount = orders.filter(o => o.status === "Served").length;
+  const sales = orders.filter(o => o.status === "Served").reduce((acc, o) => acc + o.total, 0);
+
+  document.getElementById("statActive").textContent = activeCount;
+  document.getElementById("statCooking").textContent = cookCount;
+  document.getElementById("statServed").textContent = servedCount;
+  document.getElementById("statRevenue").textContent = `₹${sales}`;
+
+  const container = document.getElementById("staffOrdersContainer");
+  if (orders.length === 0) {
+    container.innerHTML = `<div style="grid-column:1/-1;padding:40px;text-align:center;color:var(--text-muted);background:#fff;border-radius:12px;border:1px dashed var(--border-line);">No customer orders received yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = orders.map(order => `
+    <div class="order-box">
+      <div class="order-box-header">
+        <div>
+          <h4 style="font-size:16px;">Table ${order.table}</h4>
+          <span style="font-size:11px;color:var(--text-muted);">${order.id} · ${order.time} · <b>${order.paymentMethod}</b></span>
+        </div>
+        <span class="order-pill ${order.status}">${order.status}</span>
+      </div>
+
+      <div class="order-items-list">
+        ${order.items.map(i => `
+          <div>
+            <span>${i.qty} × ${i.name}</span>
+            <strong>₹${i.qty * i.price}</strong>
+          </div>
+        `).join("")}
+        ${order.note ? `<div style="margin-top:6px;background:#fef8ed;padding:6px;border-radius:6px;font-size:11px;color:#8f620e;"><b>Note:</b> ${sanitize(order.note)}</div>` : ''}
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+        <span style="font-size:12px;color:var(--text-muted);">Amount</span>
+        <strong style="font-size:17px;color:var(--primary-red);">₹${order.total}</strong>
+      </div>
+
+      ${order.prepMinutes ? `
+        <div style="font-size:12px;color:var(--status-green);font-weight:700;margin-bottom:8px;">
+          ⏱ Timer: ${order.prepMinutes} mins
+        </div>
+      ` : ''}
+
+      ${order.status === 'New' ? `
+        <div style="font-size:11px;font-weight:800;color:var(--text-muted);margin-top:6px;">SELECT PREP TIME TO ACCEPT:</div>
+        <div class="time-selector-row">
+          <button class="time-btn" onclick="acceptWithTimer('${order.id}', 10)">10 Min</button>
+          <button class="time-btn" onclick="acceptWithTimer('${order.id}', 15)">15 Min</button>
+          <button class="time-btn" onclick="acceptWithTimer('${order.id}', 20)">20 Min</button>
+          <button class="time-btn" onclick="acceptWithTimer('${order.id}', 30)">30 Min</button>
+          <button class="time-btn" onclick="acceptWithTimer('${order.id}', 45)">45 Min</button>
+        </div>
+      ` : ''}
+
+      <div class="order-actions">
+        ${order.status === 'Accepted' ? `<button class="primary-btn" style="width:auto;" onclick="updateOrderStatus('${order.id}','Preparing')">Cooking Now</button>` : ''}
+        ${order.status === 'Preparing' ? `<button class="primary-btn" style="width:auto;" onclick="updateOrderStatus('${order.id}','Ready')">Mark Ready</button>` : ''}
+        ${order.status === 'Ready' ? `<button class="primary-btn" style="width:auto;" onclick="markOrderServed('${order.id}', ${order.table})">Mark Served & Rotate Table PIN</button>` : ''}
+      </div>
+    </div>
+  `).join("");
+}
+
+function acceptWithTimer(orderId, minutes) {
+  const target = systemOrders.find(o => o.id === orderId);
+  if (!target) return;
+
+  const now = Date.now();
+  target.status = "Accepted";
+  target.prepMinutes = minutes;
+  target.acceptedAt = now;
+  target.targetFinishTime = now + (minutes * 60 * 1000);
+
+  localStorage.setItem("dineflow_sys_orders", JSON.stringify(systemOrders));
+  renderStaffDashboard();
+  checkCustomerOrderStatus();
+  popToast(`Order accepted with ${minutes}-minute timer!`);
+}
+
+function updateOrderStatus(id, status) {
+  const target = systemOrders.find(o => o.id === id);
+  if (target) {
+    target.status = status;
+    localStorage.setItem("dineflow_sys_orders", JSON.stringify(systemOrders));
+    renderStaffDashboard();
+    checkCustomerOrderStatus();
+    popToast(`Status set to ${status}`);
+  }
+}
+
+// When served, mark order complete AND auto-rotate table PIN
+function markOrderServed(orderId, tableNum) {
+  const target = systemOrders.find(o => o.id === orderId);
+  if (target) {
+    target.status = "Served";
+    localStorage.setItem("dineflow_sys_orders", JSON.stringify(systemOrders));
+    
+    // Auto-rotate the PIN for that table so old code expires
+    const newPin = updateSingleTablePin(currentStaffLicense, tableNum);
+    renderStaffTablePins();
+    renderStaffDashboard();
+    checkCustomerOrderStatus();
+
+    popToast(`Order served! Table ${tableNum} PIN rotated to ${newPin}`);
+  }
+}
+
+// =========================================================================
+// HELPERS & STORAGE SYNC
+// =========================================================================
+function popToast(msg) {
+  const toast = document.getElementById("toast");
+  toast.textContent = msg;
+  toast.classList.remove("hidden");
+  clearTimeout(window.tTimer);
+  window.tTimer = setTimeout(() => toast.classList.add("hidden"), 2400);
+}
+
+function sanitize(str) {
+  return String(str).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
+}
+
+// Cross-tab auto sync
+window.addEventListener('storage', (e) => {
+  if (e.key === 'dineflow_sys_orders') {
+    systemOrders = JSON.parse(e.newValue || '[]');
+    if (currentStaffLicense) {
+      renderStaffDashboard();
+      playKitchenChime();
+    }
+    checkCustomerOrderStatus();
+  }
+  if (e.key === 'dineflow_table_pins' && currentStaffLicense) {
+    renderStaffTablePins();
+  }
+});
+
+// Initial boot
+loadCustomerView();
+refreshCart();
+</script>
+</body>
+  </html>
